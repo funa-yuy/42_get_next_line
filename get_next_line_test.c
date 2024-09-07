@@ -6,18 +6,20 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/04 23:52:45 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/07 18:43:30 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "get_next_line.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdint.h>//SIZE_MAX→#include <limits.h>じゃだめ
 
-#define BUFFER_SIZE 4
+#define BUFFER_SIZE 3
 
 // char	*get_next_line(int fd)
 // {
@@ -110,7 +112,6 @@ static bool	read_and_pack(char **p_store, int fd)
 {
 	char	buf[BUFFER_SIZE + 1];
 	size_t	read_bytes;
-
 	while (*p_store == NULL || strchr(*p_store, '\n') == NULL)
 	{
 		read_bytes = read(fd, buf, BUFFER_SIZE);
@@ -121,9 +122,11 @@ static bool	read_and_pack(char **p_store, int fd)
 		buf[read_bytes] = '\0'; //最後に終端ヌルを入れてる
 		if (!pack(p_store, buf, read_bytes))
 			return (false);
+		printf("buf：%s\n", *p_store);
 		if (read_bytes < BUFFER_SIZE)//１行の長さがバッファサイズより大きかったらwhileを回す
 			break ;
 	}
+	// printf("p_store：%s", *p_store);
 	return (true);
 }
 
@@ -235,7 +238,7 @@ int main() {
         return (1);
     }
     while ((line = get_next_line(fd)) != NULL) {
-        printf("%s", line);
+        printf("出力：%s", line);
 		fflush(stdout);
         free(line);
     }

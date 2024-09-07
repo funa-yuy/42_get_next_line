@@ -6,69 +6,120 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/08/28 22:31:08 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/07 19:29:23 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdbool.h>
+#include "get_next_line.h"
 
-#define BUFFER_SIZE 100
-
-
-char	*ft_strdup(const char *s1);
-
-
-
-
-char	gnl_read_line(int fd, char *lines)
+static char	*nullize_free(char *p)
 {
-	char	buf[BUFFER_SIZE];
-	size_t	read_byte;
-	char	*newline;
-
-	while (ft_strchr(buf, '\n') != NULL)
-	read_byte = read(fd, &buf, BUFFER_SIZE);
-	if (read_byte <= 0)
-		return (NULL);
+	free(p);
+	p = NULL;
+	return (NULL);
+}
 
 
+static void	input_line(char *lines, char *buf, size_t read_byte)
+{
+	char	*memo;
 
-	if (ft_strchr(lines, '\n') == NULL)
-		newline = ft_strdup(lines);
-		return (newline);
+	if (lines == NULL)
+		lines = ft_substr(buf, 0, read_byte);//linesに入れる
 	else
-		char *front;
-		char *back;
-
-		back = ft_strchr(lines, '\n');
-		front = strlen(lines) - strlen(back);
-
-
-
-
-
-
-
+	{
+		memo = lines;
+		lines = ft_strjoin(lines, buf); //ft_strjoinで、linesと bufを連結
+		free(memo);
+	}
+	if (lines == NULL)
+		nullize_free(lines);
 
 }
 
+static char	*extract_line(char *lines)
+{
+	char	*line_n;
+	char	*line_end;
+	char	*origin;
+	char	*one_line;
+
+	line_n = ft_strchr(lines, '\n');//最初の改行以降の文字列
+	line_end = lines + ft_strlen(lines);//linesの先頭ポインターに、linesの文字数を足す→linesの末尾を指すポインタを意味する
+	origin = lines;//元の文字列も先頭ポインター
+	lines = NULL;
+	if (line_n == NULL || line_n + 1 == line_end)//改行がないか、改行が最後の文字だったら
+		one_line = ft_substr(origin, 0, line_end - origin);
+	else
+	{
+		one_line = ft_substr(origin, 0, line_n - origin + 1);//元の文字列の0文字目から、改行まで
+		lines = ft_substr(origin, line_n - origin + 1, line_end - line_n);//改行以降の文字列
+		if (one_line == NULL || lines == NULL)
+		{
+			nullize_free(one_line);
+			nullize_free(lines);
+
+		}
+	}
+	free(origin);
+	return (one_line);
+}
 
 char	*get_next_line(int fd)
 {
 	static char	*lines;
+	char		buf[BUFFER_SIZE + 1];
+	size_t		read_byte;
 
 	if (BUFFER_SIZE <= 0)
 		return (NULL);
-	gnl_read_line(fd, &lines);
-	if (!read_and_pack(&lines, fd))
-		return (nullize_free(&lines));
-	return (extract_line(&lines));
+	while (lines == NULL || ft_strchr(lines, '\n') == NULL)
+	{
+		read_byte = read(fd, &buf, BUFFER_SIZE); //BUFFER_SIZE分リード
+		if (read_byte <= 0)
+			nullize_free(lines);
+		if (read_byte == 0 && lines == NULL)
+			nullize_free(lines);
+		buf[read_byte] = '\0';//最後に終端ヌル
+		input_line(lines, buf, read_byte);
+		// if (lines == NULL)
+		// 	lines = ft_substr(buf, 0, read_byte);//linesに入れる
+		// else
+		// {
+		// 	memo = lines;
+		// 	lines = ft_strjoin(lines, buf); //ft_strjoinで、linesと bufを連結
+		// 	free(memo);
+		// }
+		// if (lines == NULL)
+		// 	nullize_free(&lines);
+		if (read_byte < BUFFER_SIZE)//１行の長さがバッファサイズより大きかったらwhileを回す
+			break ;
+	}
+	return (extract_line(lines));
 }
+
+int	main(void)
+{
+	int		fd;
+	char	*one_line;
+
+	fd = open("./text.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		perror("open");
+		return (1);
+	}
+	while ((one_line = get_next_line(fd)) != NULL)
+	{
+		printf("出力：%s", one_line);
+		fflush(stdout);
+		free(one_line); //malloc使ってないからfreeはコメントアウト
+	}
+	printf("close");
+	close(fd);
+	return (0);
+}
+
 
 // int	main()
 // {
@@ -110,7 +161,7 @@ char	*get_next_line(int fd)
 	// }
 	// printf("fileから%dバイト読み込みました。\n", byte_num);
 	// // 改行文字を探す
-	// newline_pos = strchr(buf, '\n');
+	// newline_pos = ft_strchr(buf, '\n');
 	// if (newline_pos != NULL)
 	// {
 	// 	// 改行文字までの部分を buf_n にコピー
@@ -129,21 +180,21 @@ char	*get_next_line(int fd)
 //  return (0);
 // }
 
-int main() {
-    int fd;
-    char *line;
+// int main() {
+//     int fd;
+//     char *line;
 
-    // ファイルを開く
-    fd = open("./text.txt", O_RDONLY);
-    if (fd == -1) {
-        perror("open");
-        return (1);
-    }
-    while ((line = get_next_line(fd)) != NULL) {
-        printf("%s", line);
-		fflush(stdout);
-        free(line);
-    }
-    close(fd);
-    return (0);
-}
+//     // ファイルを開く
+//     fd = open("./text.txt", O_RDONLY);
+//     if (fd == -1) {
+//         perror("open");
+//         return (1);
+//     }
+//     // while ((line = get_next_line(fd)) != NULL) {
+//     //     printf("%s", line);
+// 	// 	fflush(stdout);
+//     //     free(line);
+//     // }
+//     close(fd);
+//     return (0);
+// }
