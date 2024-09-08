@@ -6,11 +6,11 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/07 18:43:30 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/08 18:21:53 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+// #include "get_next_line.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
@@ -122,7 +122,7 @@ static bool	read_and_pack(char **p_store, int fd)
 		buf[read_bytes] = '\0'; //最後に終端ヌルを入れてる
 		if (!pack(p_store, buf, read_bytes))
 			return (false);
-		printf("buf：%s\n", *p_store);
+		// printf("buf：%s\n", *p_store);
 		if (read_bytes < BUFFER_SIZE)//１行の長さがバッファサイズより大きかったらwhileを回す
 			break ;
 	}
@@ -165,6 +165,7 @@ char	*get_next_line(int fd)
 		return (NULL);
 	if (!read_and_pack(&read_s, fd))
 		return (nullize_free(&read_s));
+	printf("read_s出力：%s\n", read_s);
 	return (extract_line(&read_s));
 }
 

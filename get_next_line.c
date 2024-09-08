@@ -6,11 +6,13 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/08 02:03:27 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/08 19:31:02 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+#include <stdio.h>
 
 static char	*nullize_free(char *p)
 {
@@ -19,7 +21,7 @@ static char	*nullize_free(char *p)
 	return (NULL);
 }
 
-static void	input_line(char *lines, char *buf, size_t read_byte)
+static bool	input_line(char *lines, char *buf, size_t read_byte)
 {
 	char	*memo;
 
@@ -31,8 +33,9 @@ static void	input_line(char *lines, char *buf, size_t read_byte)
 		lines = ft_strjoin(lines, buf);
 		free(memo);
 	}
-	if (lines == NULL)
-		nullize_free(lines);
+	// printf("lines：%s\n", lines);
+	// return (lines);
+	return (lines != NULL);
 }
 
 static char	*extract_line(char *lines)
@@ -74,35 +77,39 @@ char	*get_next_line(int fd)
 	{
 		read_byte = read(fd, &buf, BUFFER_SIZE);
 		if (read_byte <= 0)
-			nullize_free(lines);
+			return (nullize_free(lines));
 		if (read_byte == 0 && lines == NULL)
-			nullize_free(lines);
+			return (nullize_free(lines));
 		buf[read_byte] = '\0';
-		input_line(lines, buf, read_byte);
+		// printf("lines：%s\n", input_line(lines, buf, read_byte));
+		// lines = input_line(lines, buf, read_byte);
+		if (!input_line(lines, buf, read_byte))
+			return (nullize_free(lines));
 		if (read_byte < BUFFER_SIZE)
 			break ;
 	}
 	return (extract_line(lines));
 }
 
-// int	main(void)
-// {
-// 	int		fd;
-// 	char	*one_line;
 
-// 	fd = open("./text.txt", O_RDONLY);
-// 	if (fd == -1)
-// 	{
-// 		perror("open");
-// 		return (1);
-// 	}
-// 	while ((one_line = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("出力：%s", one_line);
-// 		fflush(stdout);
-// 		free(one_line);
-// 	}
-// 	printf("close");
-// 	close(fd);
-// 	return (0);
-// }
+int	main(void)
+{
+	int		fd;
+	char	*one_line;
+
+	fd = open("./text.txt", O_RDONLY);
+	if (fd == -1)
+	{
+		perror("open");
+		return (1);
+	}
+	while ((one_line = get_next_line(fd)) != NULL)
+	{
+		printf("出力：%s", one_line);
+		fflush(stdout);
+		free(one_line);
+	}
+	printf("close");
+	close(fd);
+	return (0);
+}
