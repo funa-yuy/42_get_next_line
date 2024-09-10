@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/10 18:14:39 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/10 19:20:35 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,34 +87,34 @@ char	*get_next_line(int fd)
 	return (extract_line(&lines));
 }
 
-int	main()
-// int	main(int argc, char *argv[])
-{
-	int		fd;
-	char	*one_line;
-	// (void)	argc;
-	// (void)	argv;
+// int	main()
+// // int	main(int argc, char *argv[])
+// {
+// 	int		fd;
+// 	char	*one_line;
+// 	// (void)	argc;
+// 	// (void)	argv;
 
-	// if (argc <= 1){
-	// 	printf("Give file name to process");
-	// 	return(1);
-	// }
-	// printf("%s\n", argv[1]);
-	// fd = open(argv[1], O_RDONLY);
-	fd = 5000;
-	// fd = open("./char1.txt", O_RDONLY);
-	if (fd == -1)
-	{
-		perror("open");
-		return (1);
-	}
-	while ((one_line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", one_line);
-		fflush(stdout);
-		free(one_line);
-	}
-	// printf("close");
-	close(fd);
-	return (0);
-}
+// 	// if (argc <= 1){
+// 	// 	printf("Give file name to process");
+// 	// 	return(1);
+// 	// }
+// 	// printf("%s\n", argv[1]);
+// 	// fd = open(argv[1], O_RDONLY);
+// 	fd = 5000;
+// 	// fd = open("./char1.txt", O_RDONLY);
+// 	if (fd == -1)
+// 	{
+// 		perror("open");
+// 		return (1);
+// 	}
+// 	while ((one_line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", one_line);
+// 		fflush(stdout);
+// 		free(one_line);
+// 	}
+// 	// printf("close");
+// 	close(fd);
+// 	return (0);
+// }
