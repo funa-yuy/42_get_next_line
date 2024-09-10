@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:44:03 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/07 19:04:16 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/09 19:05:21 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ char	*ft_strchr(const char *s, int c)
 		return ((char *)s);
 	return (NULL);
 }
-
 
 size_t	ft_strlen(const char *s)
 {
@@ -62,7 +61,7 @@ void	*ft_memmove(void *dst, const void *src, size_t len)
 	return (ptr_dst);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)//startで指定された 位置からlengthバイト分の文字列を返す
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
 	size_t	n;
 	char	*p;

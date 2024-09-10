@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/08 19:34:52 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/09 23:23:08 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,14 +67,14 @@ char	*get_next_line(int fd)
 {
 	static char	*lines;
 	char		buf[BUFFER_SIZE + 1];
-	size_t		read_byte;
+	int			read_byte;
 
-	if (BUFFER_SIZE <= 0)
+	if (BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX - 1)
 		return (NULL);
 	while (lines == NULL || ft_strchr(lines, '\n') == NULL)
 	{
 		read_byte = read(fd, &buf, BUFFER_SIZE);
-		if (read_byte <= 0)
+		if (read_byte < 0)
 			return (nullize_free(&lines));
 		if (read_byte == 0 && lines == NULL)
 			return (nullize_free(&lines));
@@ -87,12 +87,22 @@ char	*get_next_line(int fd)
 	return (extract_line(&lines));
 }
 
-// int	main(void)
+// int	main()
+// // int	main(int argc, char *argv[])
 // {
 // 	int		fd;
 // 	char	*one_line;
+// 	// (void)	argc;
+// 	// (void)	argv;
 
-// 	fd = open("./text.txt", O_RDONLY);
+// 	// if (argc <= 1){
+// 	// 	printf("Give file name to process");
+// 	// 	return(1);
+// 	// }
+// 	// printf("%s\n", argv[1]);
+// 	// fd = open(argv[1], O_RDONLY);
+// 	fd = 5000;
+// 	// fd = open("./char1.txt", O_RDONLY);
 // 	if (fd == -1)
 // 	{
 // 		perror("open");
@@ -100,11 +110,11 @@ char	*get_next_line(int fd)
 // 	}
 // 	while ((one_line = get_next_line(fd)) != NULL)
 // 	{
-// 		printf("出力：%s", one_line);
+// 		printf("%s", one_line);
 // 		fflush(stdout);
 // 		free(one_line);
 // 	}
-// 	printf("close");
+// 	// printf("close");
 // 	close(fd);
 // 	return (0);
 // }
