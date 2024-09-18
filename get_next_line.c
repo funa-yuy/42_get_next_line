@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/14 22:17:55 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/18 23:05:21 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,12 @@ static char	*nullize_free(char **p)
 	return (NULL);
 }
 
-// static bool	input_line(char **lines, char *buf, size_t read_byte)
-static bool	input_line(char **lines, char *buf)
+static bool	input_line(char **lines, char *buf, size_t read_byte)
 {
 	char	*memo;
 
 	if (*lines == NULL)
-		*lines = ft_substr(buf, 0, ft_strlen(buf));
+		*lines = ft_substr(buf, 0, read_byte);
 	else
 	{
 		memo = *lines;
@@ -62,114 +61,72 @@ static char	*extract_line(char **lines)
 	return (one_line);
 }
 
-
-static char *read_line(char	**lines, int fd)
+char	*get_next_line(int fd)
 {
-	// static char	*lines;
+	static char	*lines;
 	char		*buf;
-	// char		buf[BUFFER_SIZE  + 1];
 	ssize_t		read_byte;
 
-	// if (BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX - 1)
-	// 	return (NULL);
+	if (BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX - 1)
+		return (NULL);
 	buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
 	if (!buf)
 		return (NULL);
-	while (*lines == NULL || ft_strchr(*lines, '\n') == NULL)
+	while (lines == NULL || ft_strchr(lines, '\n') == NULL)
 	{
 		read_byte = read(fd, buf, BUFFER_SIZE);
 		if (read_byte < 0)
 		{
 			free(buf);
-			return (nullize_free(lines));
+			return (nullize_free(&lines));
 		}
-		if (read_byte == 0 && *lines == NULL)
-		{
-			// free(buf);
-			return (nullize_free(lines));
-		}
-		buf[read_byte] = '\0';
-		// if (!input_line(lines, buf, read_byte))
-		if (!input_line(lines, buf))
+		if (read_byte == 0 && lines == NULL)
 		{
 			free(buf);
-			return (nullize_free(lines));
+			return (nullize_free(&lines));
+		}
+		buf[read_byte] = '\0';
+		if (!input_line(&lines, buf, read_byte))
+		{
+			free(buf);
+			return (nullize_free(&lines));
 		}
 		if (read_byte < BUFFER_SIZE)
 			break ;
 	}
 	free(buf);
-	return (*lines);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*lines;
-	// char		*buf;
-	// char		buf[BUFFER_SIZE  + 1];
-	// ssize_t		read_byte;
-
-	if (BUFFER_SIZE <= 0 || BUFFER_SIZE > SIZE_MAX - 1)
-		return (NULL);
-	// buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
-	// if (!buf)
-	// 	return (NULL);
-	// while (lines == NULL || ft_strchr(lines, '\n') == NULL)
-	// {
-	// 	read_byte = read(fd, buf, BUFFER_SIZE);
-	// 	if (read_byte < 0)
-	// 	{
-	// 		// free(buf);
-	// 		return (nullize_free(&lines));
-	// 	}
-	// 	if (read_byte == 0 && lines == NULL)
-	// 	{
-	// 		// free(buf);
-	// 		return (nullize_free(&lines));
-	// 	}
-	// 	buf[read_byte] = '\0';
-	// 	// if (!input_line(&lines, buf, read_byte))
-	// 	if (!input_line(&lines, buf))
-	// 	{
-	// 		// free(buf);
-	// 		return (nullize_free(&lines));
-	// 	}
-	// 	if (read_byte < BUFFER_SIZE)
-	// 		break ;
-	// }
-	read_line(&lines, fd);
 	return (extract_line(&lines));
 }
 
-#include <stdio.h>
-// int	main()
-int	main(int argc, char *argv[])
-{
-	int		fd;
-	char	*one_line;
-	// (void)	argc;
-	// (void)	argv;
+// #include <stdio.h>
+// // int	main()
+// int	main(int argc, char *argv[])
+// {
+// 	int		fd;
+// 	char	*one_line;
+// 	// (void)	argc;
+// 	// (void)	argv;
 
-	if (argc <= 1){
-		printf("Give file name to process");
-		return(1);
-	}
-	printf("%s\n", argv[1]);
-	fd = open(argv[1], O_RDONLY);
-	// fd = 5000;
-	// fd = open("./char1.txt", O_RDONLY);
-	if (fd == -1)
-	{
-		perror("open");
-		return (1);
-	}
-	while ((one_line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", one_line);
-		fflush(stdout);
-		free(one_line);
-	}
-	// printf("close");
-	close(fd);
-	return (0);
-}
+// 	if (argc <= 1){
+// 		printf("Give file name to process");
+// 		return(1);
+// 	}
+// 	printf("%s\n", argv[1]);
+// 	fd = open(argv[1], O_RDONLY);
+// 	// fd = 5000;
+// 	// fd = open("./char1.txt", O_RDONLY);
+// 	if (fd == -1)
+// 	{
+// 		perror("open");
+// 		return (1);
+// 	}
+// 	while ((one_line = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("%s", one_line);
+// 		fflush(stdout);
+// 		free(one_line);
+// 	}
+// 	// printf("close");
+// 	close(fd);
+// 	return (0);
+// }
