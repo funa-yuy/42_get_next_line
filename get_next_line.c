@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/18 23:05:21 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/19 01:32:48 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,12 @@ static char	*extract_line(char **lines)
 	return (one_line);
 }
 
+static char	*read_line_error(char **lines, char *buf)
+{
+	free(buf);
+	return (nullize_free(lines));
+}
+
 char	*get_next_line(int fd)
 {
 	static char	*lines;
@@ -76,57 +82,15 @@ char	*get_next_line(int fd)
 	{
 		read_byte = read(fd, buf, BUFFER_SIZE);
 		if (read_byte < 0)
-		{
-			free(buf);
-			return (nullize_free(&lines));
-		}
+			return (read_line_error(&lines, buf));
 		if (read_byte == 0 && lines == NULL)
-		{
-			free(buf);
-			return (nullize_free(&lines));
-		}
+			return (read_line_error(&lines, buf));
 		buf[read_byte] = '\0';
 		if (!input_line(&lines, buf, read_byte))
-		{
-			free(buf);
-			return (nullize_free(&lines));
-		}
+			return (read_line_error(&lines, buf));
 		if (read_byte < BUFFER_SIZE)
 			break ;
 	}
 	free(buf);
 	return (extract_line(&lines));
 }
-
-// #include <stdio.h>
-// // int	main()
-// int	main(int argc, char *argv[])
-// {
-// 	int		fd;
-// 	char	*one_line;
-// 	// (void)	argc;
-// 	// (void)	argv;
-
-// 	if (argc <= 1){
-// 		printf("Give file name to process");
-// 		return(1);
-// 	}
-// 	printf("%s\n", argv[1]);
-// 	fd = open(argv[1], O_RDONLY);
-// 	// fd = 5000;
-// 	// fd = open("./char1.txt", O_RDONLY);
-// 	if (fd == -1)
-// 	{
-// 		perror("open");
-// 		return (1);
-// 	}
-// 	while ((one_line = get_next_line(fd)) != NULL)
-// 	{
-// 		printf("%s", one_line);
-// 		fflush(stdout);
-// 		free(one_line);
-// 	}
-// 	// printf("close");
-// 	close(fd);
-// 	return (0);
-// }

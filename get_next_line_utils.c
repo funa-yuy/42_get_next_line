@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:44:03 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/17 23:12:48 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/09/19 00:04:19 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	p[n] = '\0';
 	return (p);
 }
-
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
