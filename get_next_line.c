@@ -6,7 +6,7 @@
 /*   By: miyuu <miyuu@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/22 20:42:36 by miyuu             #+#    #+#             */
-/*   Updated: 2024/09/19 19:38:55 by miyuu            ###   ########.fr       */
+/*   Updated: 2024/12/29 19:08:26 by miyuu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static bool	input_line(char **lines, char *buf, size_t read_byte)
 	{
 		memo = *lines;
 		*lines = ft_strjoin(*lines, buf);
+		if (*lines == NULL)
+			return (false);
 		free(memo);
 	}
 	return (*lines != NULL);

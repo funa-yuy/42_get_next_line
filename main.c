@@ -67,7 +67,7 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	buf = (char *)malloc((BUFFER_SIZE + 1) * sizeof(char));// BUFFER_SIZE + 1のサイズでバッファをメモリ上に確保
 	if (!buf)
 		return (NULL);
 	while (lines == NULL || ft_strchr(lines, '\n') == NULL)
@@ -86,7 +86,7 @@ char	*get_next_line(int fd)
 		if (read_byte < BUFFER_SIZE)
 			break ;
 	}
-	free(buf);
+	free(buf);//bufはローカル変数のため、この関数が終了すると、buf自体が消滅（スタックから削除)される。そのため、bufにNULLを代入する必要はない
 	return (extract_line(&lines));
 }
 
